@@ -38,12 +38,14 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return jwtUtil.generateToken(user.getEmail());
+        // ✅ Use userId in token now
+        return jwtUtil.generateToken(user.getId());
     }
 
     public User getUserFromToken(String token) {
-        String email = jwtUtil.extractEmail(token);
-        return userRepo.findByEmail(email)
+        // ✅ Extract userId instead of email
+        String userId = jwtUtil.extractUserId(token);
+        return userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
