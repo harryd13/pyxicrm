@@ -9,25 +9,27 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
+
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private final long expiration = 1000 * 60 * 60 * 24; // 24 hours
 
-    public String generateToken(String email) {
+    // Now takes userId instead of email
+    public String generateToken(String userId) {
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(userId) // ✅ <--- this is the main change
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)
                 .compact();
     }
 
-    public String extractEmail(String token) {
+    public String extractUserId(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .getSubject();
+                .getSubject(); // ✅ returns the userId now
     }
 
     public boolean validateToken(String token) {
